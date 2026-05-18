@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed `shared/apm.md` matrix fan-out being silently stripped by the GitHub Actions cross-job secret masker when the GitHub App `private-key` was carried in the `apm-prep` matrix output; credentials are now resolved per row via `$GITHUB_ENV` in the `apm` job. (#1373)
 - `apm compile --watch` now honors `targets: [claude, cursor]` (and every other multi-target / single-target configuration) on every recompile. Previously the watch path bypassed the resolver the one-shot path uses and let `CompilationConfig.from_apm_yml` fall back to the all-families default, silently regenerating `GEMINI.md` after every file edit. The watch path now resolves the effective target via the same helper the one-shot path uses and forwards it as `target=` into both the initial compile and every debounced recompile. (#1345)
 - Fixed hook commands using relative paths that break for Claude target (#1310)
 - Fixed target not propagating to intermediate CompilationConfig during compilation (#765)
