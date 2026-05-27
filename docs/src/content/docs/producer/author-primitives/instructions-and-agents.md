@@ -145,9 +145,9 @@ for...
 | `color` | optional | Display color for harnesses that render it (Copilot, Claude, OpenCode). OpenCode requires a `#rgb`/`#rrggbb` hex literal or one of its theme names; see "Common pitfalls" below |
 
 `model` and `tools` reach Copilot, Claude, Cursor, and OpenCode
-verbatim. Codex receives a TOML translation. Windsurf drops both
-fields and emits a diagnostic warning at install time -- its skill
-format does not support per-persona model or tool scoping.
+verbatim. Codex receives a TOML translation. Windsurf and Gemini do
+not receive `.agent.md` files at all -- Cascade auto-invokes any
+`SKILL.md` by its description, and Gemini CLI has no agents primitive.
 
 OpenCode is the strictest of the verbatim targets: it requires
 `tools` as a `tool-name: boolean` **mapping** (not a list, not a
@@ -179,8 +179,19 @@ offending package and field so you can fix the source.
 | cursor | `.cursor/agents/<name>.md` | verbatim |
 | opencode | `.opencode/agents/<name>.md` | verbatim |
 | codex | `.codex/agents/<name>.toml` | YAML frontmatter -> TOML; body becomes `developer_instructions` |
-| windsurf | `.windsurf/skills/<name>/SKILL.md` | reformatted as a Cascade skill; `model`/`tools` dropped with a warning |
+| windsurf | not deployed | Windsurf has no agents primitive -- author personas as skills (Cascade auto-invokes by description) |
 | gemini | not deployed | Gemini CLI has no agents primitive |
+
+:::caution[Migration]
+Earlier APM versions compiled `.apm/agents/*.agent.md` to
+`.windsurf/skills/<name>/SKILL.md` with `model` and `tools`
+frontmatter stripped. That mapping has been removed: agents no
+longer deploy to Windsurf at all. If you previously relied on it
+and the persona still needs to reach Windsurf, re-author it as a
+skill under `.apm/skills/<name>/SKILL.md` -- Cascade auto-invokes
+skills by their `description` field, which is the same surface
+the agent path was using.
+:::
 
 Source: `src/apm_cli/integration/agent_integrator.py`,
 `src/apm_cli/integration/targets.py`.
@@ -212,10 +223,10 @@ dedicated persona.
   will not bind.
 - **Agent named `default` or `start`.** These collide with script
   resolution in `apm run`. Pick a descriptive name.
-- **`model:` and `tools:` on a Windsurf-targeted agent.** Cascade has
-  no equivalent; APM warns and drops them. If those constraints are
-  load-bearing, do not target windsurf for that agent -- ship it as
-  an instruction instead, or restrict the package's `targets:`.
+- **Targeting an agent at Windsurf or Gemini.** Neither harness has an
+  agents primitive. Cascade auto-invokes skills by description and
+  Gemini folds context into `GEMINI.md`. If a persona must reach those
+  targets, author it as a skill under `.apm/skills/<name>/SKILL.md`.
 - **`tools:` as a list, or a named color, on an OpenCode-targeted
   agent.** OpenCode's loader rejects `tools: [Read, Grep]` and
   colors like `cyan`. Use the mapping form (`tools: {Read: true}`)
