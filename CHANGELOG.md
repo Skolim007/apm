@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `apm install` now preserves scoped MCP package config keys such as
+  `@playwright/mcp` across Claude, Codex, and Copilot harness configs instead
+  of truncating them to `mcp`. (#1699)
 - `apm install` now accepts marketplace git-subdir refs with package-version
   tags such as `package@v1.0.1` inside the `#ref` fragment while still
   rejecting retired string-form `@alias` shorthand. (closes #1696, #1698)
