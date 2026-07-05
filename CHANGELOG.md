@@ -38,6 +38,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `apm install` now deploys hook script directories as self-contained
+  bundles for Claude-family targets, Copilot, and Kiro, so sibling
+  helper modules resolve at runtime. JavaScript and TypeScript hook
+  bundles also get a minimal module-type `package.json` sidecar, which
+  prevents a consumer repo's `type: module` from breaking CommonJS hooks.
+  (#2023)
 - Marketplace plugin `bin/` deployment now hardens POSIX executable copies to
   user-only `0o700` permissions and normalizes legacy `bin_deploy.deny` GitHub
   forms before matching. -- by @WilliamK112 (#1971)

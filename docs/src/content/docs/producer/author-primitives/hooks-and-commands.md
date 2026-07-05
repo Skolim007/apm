@@ -85,6 +85,19 @@ file lives in `hooks/` or `.apm/hooks/`, a path like
 `./hooks/run-hook.sh` resolves from the package root so the deployed
 path is not doubled.
 
+When a hook command points at a script inside a package hook directory,
+APM deploys the hook source bundle so sibling helper modules stay
+available at runtime:
+
+- Claude-family merged targets (Claude, Cursor, Codex, Gemini,
+  Antigravity, and Windsurf), Copilot, and Kiro receive the same bundle.
+- Root hook JSON descriptors, symlinks, and `.apm-pin` markers are not
+  deployed.
+- JavaScript and TypeScript hook bundles get a minimal `package.json`
+  sidecar with the nearest source package's Node `type`; packages
+  without an explicit `type` deploy as `commonjs`, and shell-only
+  bundles do not get a sidecar.
+
 For multi-target packages, prefer simple hook filenames plus consumer
 per-dependency `targets:` in `dependencies.apm` to limit reach. If the
 same manifest stem is mirrored in both `hooks/` and `.apm/hooks/`, APM
