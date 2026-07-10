@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `apm audit --ci` no longer raises false `config-consistency` failures in
+  monorepos whose local-path sub-packages contribute MCP servers. Transitively
+  contributed servers now carry lockfile provenance and are exempt from the
+  orphan check. (#2084)
 - In-repository plugins from SSH-registered GitLab and generic git
   marketplaces no longer rewrite to HTTPS; generated `git:` and `path:`
   dependencies keep using existing SSH keys. (#2091)
